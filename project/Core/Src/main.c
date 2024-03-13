@@ -54,7 +54,17 @@ static void MX_GPIO_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+ /* Prevent unused argument(s) compilation warning */
+ UNUSED(GPIO_Pin);
 
+
+ HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+ /* NOTE: This function should not be modified, when the callback is needed,
+          the HAL_GPIO_EXTI_Callback could be implemented in the user file
+  */
+}
 /* USER CODE END 0 */
 
 /**
@@ -98,21 +108,13 @@ int main(void)
 //		  GPIOA->ODR ^= 0x01 <<5;
 //	  }
 //	  GPIOA->ODR ^= 0x01 << 5;*/
-//    /* USER CODE END WHILE */
-//
-//    /* USER CODE BEGIN 3 */
+    /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
 //  }
-//  /* USER CODE END 3 */
-
-while(1)
-{
-	if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13) == 0){
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5,1);
-	}else
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 0);
-
+  /* USER CODE END 3 */
 }
-}
+
 /**
   * @brief System Clock Configuration
   * @retval None
@@ -177,7 +179,7 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin : PB1_Pin */
   GPIO_InitStruct.Pin = PB1_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(PB1_GPIO_Port, &GPIO_InitStruct);
 
@@ -187,6 +189,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
