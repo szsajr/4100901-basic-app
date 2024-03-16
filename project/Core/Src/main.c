@@ -59,7 +59,13 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
  /* Prevent unused argument(s) compilation warning */
  UNUSED(GPIO_Pin);
 
-
+if (GPIO_Pin == GPIO_PIN_13){
+	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+}else if (GPIO_Pin == GPIO_PIN_1){
+	HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin,0);
+	for (uint16_t counter = 0; counter < 0xEFFF; counter++){}
+	HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin,1);
+}
  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
  /* NOTE: This function should not be modified, when the callback is needed,
           the HAL_GPIO_EXTI_Callback could be implemented in the user file
@@ -183,6 +189,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(PB1_GPIO_Port, &GPIO_InitStruct);
 
+  /*Configure GPIO pin : S1_Pin */
+  GPIO_InitStruct.Pin = S1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(S1_GPIO_Port, &GPIO_InitStruct);
+
   /*Configure GPIO pin : LD2_Pin */
   GPIO_InitStruct.Pin = LD2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -191,6 +203,9 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI1_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI1_IRQn);
+
   HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
